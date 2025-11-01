@@ -39,7 +39,7 @@ export async function uploadFileToSupabase(file, bucketName = 'images', folderPa
       throw new Error(`Gagal upload file: ${error.message}`);
     }
 
-    // Dapatkan URL publik
+    // Dapatkan public URL dari file yang diupload
     const { data: publicData } = supabase
       .storage
       .from(bucketName)
