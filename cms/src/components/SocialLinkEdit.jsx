@@ -1,6 +1,7 @@
 import { Edit, SimpleForm, TextInput, required } from 'react-admin';
 import { Box, Typography, Paper } from '@mui/material';
 import { SmartFormToolbar } from './SmartFormToolbar';
+import { smartValidation } from '../utils/notifications';
 
 // Validasi untuk form
 const platformValidation = [required(), smartValidation.minLength(2)];
