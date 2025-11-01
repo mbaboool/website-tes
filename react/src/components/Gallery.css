@@ -1,0 +1,29 @@
+@media (max-width: 768px) {
+  #gallery .carousel-container-3d {
+    perspective: none;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
+  }
+
+  #gallery #carousel-3d {
+    transform-style: flat;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: max-content;
+    transform: none !important; /* Override inline style */
+  }
+
+  #gallery #carousel-3d figure {
+    position: static;
+    transform: none !important; /* Override inline style */
+    margin: 10px;
+    width: 250px; /* Adjust as needed */
+    flex-shrink: 0;
+  }
+
+  #gallery #carousel-3d figcaption {
+    display: none; /* Optionally hide captions on mobile */
+  }
+}

@@ -1,0 +1,3 @@
+## Qwen Added Memories
+- Website Mas Bagus Baraja dihosting di GitHub: https://github.com/mbaboool/web-gus-react.git dan di-deploy di Vercel: https://web-gus-react-7ed6f1g91-mbbls-projects.vercel.app
+- Saya telah membantu migrasi database aplikasi dari Firebase ke Supabase. Implementasi termasuk: 1) Mengganti konfigurasi database, 2) Mengimplementasikan upload foto untuk testimonial ke Supabase Storage dengan batas maksimal 1MB, 3) Menyimpan dan menampilkan data testimonial dan foto dari Supabase database, 4) Menangani error dan validasi yang diperlukan. Proses migrasi selesai dan berfungsi dengan baik.

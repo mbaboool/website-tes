@@ -1,0 +1,98 @@
+/* TestimonialsSection.css */
+
+.testimonials-section {
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #2a2a2a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.testimonials-section .title {
+    font-size: 2.5rem;
+    margin-bottom: 5rem;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 1fr; /* Make all rows equal height */
+    gap: 75px;
+    max-width: 1900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 5-column grid for desktop */
+@media (min-width: 992px) {
+    .testimonial-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+.testimonial-item {
+    background: #1c1c1c;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: left;
+    border-left: 5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    opacity: 0; /* Initially hidden */
+    animation: fadeInOut 10s ease-in-out infinite; /* Apply looping animation */
+    animation-delay: var(--delay); /* Use CSS variable for stagger */
+}
+
+@keyframes fadeInOut {
+    0%, 100% { /* Start and end hidden */
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    10%, 90% { /* Fade in, hold, and then prepare to fade out */
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.testimonial-item .feedback {
+    font-style: italic;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.testimonial-item .author-info {
+    text-align: right;
+}
+
+.testimonial-item .author {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ddd;
+    margin: 0;
+}
+
+.testimonial-item .source {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #aaa;
+    margin: 0;
+}
+
+.testimonial-photo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.testimonial-photo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+}
