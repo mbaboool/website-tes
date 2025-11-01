@@ -2,7 +2,6 @@ import React from 'react';
 import { Edit, SimpleForm, TextInput, DateInput, required } from 'react-admin';
 import { Box, Typography, Paper } from '@mui/material';
 import { SmartFormToolbar } from './SmartFormToolbar'; // Sesuaikan path jika berbeda
-import { smartValidation } from '../utils/notifications'; // Sesuaikan path jika berbeda
 import FileInputSupabase from './FileInputSupabase'; // Pastikan path benar
 
 // Definisikan validasi (sama seperti Create)
@@ -18,7 +17,7 @@ const descriptionValidation = [required(), (value) => {
     }
     return undefined;
 }];
-const imageValidation = [required()]; // Asumsi gambar tetap wajib saat edit jika ingin diganti
+const imageValidation = []; // Make image optional during edit
 const dateValidation = [required()];
 
 export const EventEdit = (props) => (

@@ -1,10 +1,7 @@
 // utils/fileUpload.js
-import { createClient } from '@supabase/supabase-js';
+import { dataProvider } from '../dataProvider'; // Assuming dataProvider exports the supabase client
 
-// Gunakan konfigurasi Supabase yang sama
-const supabaseUrl = 'https://qfsfzrjpgrukferrelho.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmc2Z6cmpwZ3J1a2ZlcnJlbGhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2MzkwMjIsImV4cCI6MjA3NzIxNTAyMn0.olR9VyCTPf87pKsa2bgKN4FleJJW7Y896CduEAOxIjY';
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = dataProvider;
 
 // Fungsi untuk mengupload file ke Supabase Storage
 export async function uploadFileToSupabase(file, bucketName = 'images', folderPath = '') {

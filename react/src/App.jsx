@@ -3,11 +3,11 @@ import validator from 'validator';
 import './index.css';
 import Profile from './components/Profile';
 import Fluid from './components/Fluid';
-import content from './content.json';
 import SocialIcon from './components/SocialIcon';
 import Countdown from './components/Countdown';
 import Testimonials from './components/Testimonials';
 import supabase from './config/supabase';
+import { useSiteData } from './context/DataContext';
 
 const Navbar = () => {
     const [menuActive, setMenuActive] = useState(false);
@@ -82,7 +82,7 @@ const Navbar = () => {
     );
 };
 
-const Home = () => {
+const Home = ({ hero }) => {
     const handleHeroClick = (e) => {
         e.preventDefault();
         const targetElement = document.getElementById('about');
@@ -101,47 +101,54 @@ const Home = () => {
         <section id="home" className="section">
             <Fluid />
             <div className="hero-content">
-                <h1>{content.hero.title}</h1>
-                <p className="hero-subtitle">{content.hero.subtitle}</p>
+                <h1>{hero.title}</h1>
+                <p className="hero-subtitle">{hero.subtitle}</p>
                 <a href="#about" onClick={handleHeroClick} className="hero-button">PELAJARI LEBIH DALAM</a>
             </div>
         </section>
     );
 };
 
-const About = () => (
+const About = ({ profile }) => (
     <section id="about" className="section">
-        <Profile profileData={content.profile} />
+        <Profile profileData={profile} />
     </section>
 );
 
-const Book = () => (
+const Book = ({ book }) => (
     <section id="book" className="section">
         <div className="book-container">
             <div className="book-cover">
-                <img src={content.book.image} alt={content.book.title} />
+                <img src={book.image} alt={book.title} />
             </div>
             <div className="book-info">
-                <h2>{content.book.title}</h2>
-                <p className="book-description">{content.book.description}</p>
+                <h2>{book.title}</h2>
+                <p className="book-description">{book.description}</p>
                 <ul className="book-details">
-                    {content.book.details.map((detail, index) => (
+                    {book.details.map((detail, index) => (
                         <li key={index}>{detail}</li>
                     ))}
                 </ul>
-                <a href={content.book.buyLink} className="buy-button"target="_blank" 
+                <a href={book.buyLink} className="buy-button"target="_blank" 
                  rel="noopener noreferrer">Dapatkan Sekarang</a>
             </div>
         </div>
     </section>
 );
 
-const Events = () => {
+const Events = ({ events }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [formData, setFormData] = useState({ name: '', whatsapp: '' });
     const [errors, setErrors] = useState({});
     const [lightboxImage, setLightboxImage] = useState(null);
+
+    const isValidFutureDate = (dateString) => {
+        if (!dateString) return false;
+        const date = new Date(dateString);
+        // Check if the date is valid and if it's in the future
+        return !isNaN(date.getTime()) && date > new Date();
+    };
 
     const openModal = (event) => {
         setSelectedEvent(event);
@@ -180,9 +187,9 @@ const Events = () => {
     return (
         <section id="events" className="section">
             <div className="container">
-                <h2>{content.events.title}</h2>
+                <h2>{events.title}</h2>
                 <div className="events-container">
-                    {content.events.items.map((event, index) => (
+                    {events.items.map((event, index) => (
                         <div key={index} className="event-card">
                             <img 
                                 src={event.image} 
@@ -193,7 +200,7 @@ const Events = () => {
                             <div className="event-info">
                                 <h3>{event.title}</h3>
                                 <p>{event.description}</p>
-                                {event.date ? (
+                                {isValidFutureDate(event.date) ? (
                                     <Countdown targetDate={event.date} />
                                 ) : (
                                     <div className="coming-soon">Segera Hadir</div>
@@ -245,8 +252,8 @@ const Events = () => {
     );
 };
 
-const Gallery = () => {
-    const items = content.gallery.items;
+const Gallery = ({ gallery }) => {
+    const items = gallery.items;
     const numItems = items.length;
     const angle = 360 / numItems;
     const translateZ = 500; // As per the original template's CSS
@@ -266,7 +273,7 @@ const Gallery = () => {
     return (
         <section id="gallery" className="section">
             <div className="container">
-                <h2>{content.gallery.title}</h2>
+                <h2>{gallery.title}</h2>
                 <div className="carousel-container-3d">
                     <div 
                                     id="carousel-3d"
@@ -292,7 +299,7 @@ const Gallery = () => {
     );
 };
 
-const Consultation = () => {
+const Consultation = ({ consultation, testimonial_form }) => {
     const [consultationData, setConsultationData] = useState({
         name: '',
         whatsapp: '',
@@ -498,13 +505,13 @@ const Consultation = () => {
             <div className="consultation-section-container">
                 <div className="consultation-column">
                     <div className="consultation-container">
-                        <h2>{content.consultation.title}</h2>
-                        <p>{content.consultation.subtitle}</p>
+                        <h2>{consultation.title}</h2>
+                        <p>{consultation.subtitle}</p>
                         <form onSubmit={handleConsultationSubmit} className="consultation-form">
                             <input 
                                 type="text" 
                                 name="name" 
-                                placeholder={content.consultation.fields.name} 
+                                placeholder={consultation.fields.name} 
                                 value={consultationData.name} 
                                 onChange={handleConsultationChange} 
                                 className={consultationErrors.name ? 'error' : ''}
@@ -513,7 +520,7 @@ const Consultation = () => {
                             <input 
                                 type="tel" 
                                 name="whatsapp" 
-                                placeholder={content.consultation.fields.whatsapp} 
+                                placeholder={consultation.fields.whatsapp} 
                                 value={consultationData.whatsapp} 
                                 onChange={handleConsultationChange} 
                                 className={consultationErrors.whatsapp ? 'error' : ''}
@@ -522,7 +529,7 @@ const Consultation = () => {
                             <input 
                                 type="date" 
                                 name="date" 
-                                placeholder={content.consultation.fields.date} 
+                                placeholder={consultation.fields.date} 
                                 value={consultationData.date} 
                                 onChange={handleConsultationChange} 
                                 className={consultationErrors.date ? 'error' : ''}
@@ -535,32 +542,32 @@ const Consultation = () => {
                                 className={consultationErrors.time ? 'error' : ''}
                                 required
                             >
-                                <option value="" disabled>{content.consultation.fields.time}</option>
-                                {content.consultation.timeOptions.map(time => <option key={time} value={time}>{time}</option>)} 
+                                <option value="" disabled>{consultation.fields.time}</option>
+                                {consultation.timeOptions.map(time => <option key={time} value={time}>{time}</option>)} 
                             </select>
                             {consultationErrors.time && <div className="error-message">{consultationErrors.time}</div>}
                             <textarea 
                                 name="problem" 
-                                placeholder={content.consultation.fields.problem} 
+                                placeholder={consultation.fields.problem} 
                                 value={consultationData.problem} 
                                 onChange={handleConsultationChange} 
                                 className={consultationErrors.problem ? 'error' : ''}
                                 required
                             ></textarea>
                             {consultationErrors.problem && <div className="error-message">{consultationErrors.problem}</div>}
-                            <button type="submit" className="buy-button">{content.consultation.buttonText}</button>
+                            <button type="submit" className="buy-button">{consultation.buttonText}</button>
                         </form>
                     </div>
                 </div>
                 <div className="testimonial-column">
                     <div className="consultation-container">
-                        <h2>{content.testimonial_form.title}</h2>
-                        <p>{content.testimonial_form.subtitle}</p>
+                        <h2>{testimonial_form.title}</h2>
+                        <p>{testimonial_form.subtitle}</p>
                         <form onSubmit={handleTestimonialSubmit} className="consultation-form">
                             <input 
                                 type="text" 
                                 name="name" 
-                                placeholder={content.testimonial_form.fields.name} 
+                                placeholder={testimonial_form.fields.name} 
                                 value={testimonialData.name} 
                                 onChange={handleTestimonialChange} 
                                 className={testimonialErrors.name ? 'error' : ''}
@@ -570,7 +577,7 @@ const Consultation = () => {
                             <input 
                                 type="text" 
                                 name="source" 
-                                placeholder={content.testimonial_form.fields.source} 
+                                placeholder={testimonial_form.fields.source} 
                                 value={testimonialData.source} 
                                 onChange={handleTestimonialChange} 
                                 className={testimonialErrors.source ? 'error' : ''}
@@ -579,7 +586,7 @@ const Consultation = () => {
                             {testimonialErrors.source && <div className="error-message">{testimonialErrors.source}</div>}
                             <textarea 
                                 name="message" 
-                                placeholder={content.testimonial_form.fields.message} 
+                                placeholder={testimonial_form.fields.message} 
                                 value={testimonialData.message} 
                                 onChange={handleTestimonialChange} 
                                 className={testimonialErrors.message ? 'error' : ''}
@@ -617,7 +624,7 @@ const Consultation = () => {
                                 )}
                             </div>
                             <button type="submit" className="buy-button" disabled={isSubmitting}>
-                                {isSubmitting ? 'Mengirim...' : content.testimonial_form.buttonText}
+                                {isSubmitting ? 'Mengirim...' : testimonial_form.buttonText}
                             </button>
                             {submitMessage && <p className="submit-message">{submitMessage}</p>}
                         </form>
@@ -628,7 +635,7 @@ const Consultation = () => {
     );
 };
 
-const Footer = () => {
+const Footer = ({ footer, profile }) => {
     const handleBackToTop = (e) => {
         e.preventDefault();
         const targetElement = document.getElementById('home');
@@ -649,23 +656,23 @@ const Footer = () => {
                 <div className="footer-content">
                     <div className="footer-section footer-brand">
                         <h3>Bagus Baraja</h3>
-                        <p>{content.footer.tagline}</p>
+                        <p>{footer.tagline}</p>
                     </div>
                     <div className="footer-section">
                         <h3>Kontak</h3>
-                        <a href={`mailto:${content.profile.email}`} className="contact-item">
+                        <a href={`mailto:${profile.email}`} className="contact-item">
                             <SocialIcon name="email" />
-                            <span>{content.profile.email}</span>
+                            <span>{profile.email}</span>
                         </a>
-                        <a href={`tel:${content.profile.phone}`} className="contact-item">
+                        <a href={`tel:${profile.phone}`} className="contact-item">
                             <SocialIcon name="phone" />
-                            <span>{content.profile.phone}</span>
+                            <span>{profile.phone}</span>
                         </a>
                     </div>
                     <div className="footer-section">
                         <h3>Ikuti Kami</h3>
                         <div className="social-links">
-                            {content.profile.socials.map(social => (
+                            {profile.socials.map(social => (
                                 <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer" aria-label={social.name}>
                                     <SocialIcon name={social.name} />
                                 </a>
@@ -683,17 +690,27 @@ const Footer = () => {
 };
 
 function App() {
+  const { siteData, loading } = useSiteData();
+
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a0a0a', color: 'white' }}><h2>Memuat data...</h2></div>;
+  }
+
+  if (!siteData) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a0a0a', color: 'white' }}><h2>Gagal memuat data. Silakan coba lagi nanti.</h2></div>;
+  }
+
   return (
     <>
       <Navbar />
-      <Home />
-      <About />
-      <Book />
-      <Events />
-      <Gallery />
+      <Home hero={siteData.hero} />
+      <About profile={siteData.profile} />
+      <Book book={siteData.book} />
+      <Events events={siteData.events} />
+      <Gallery gallery={siteData.gallery} />
       <Testimonials />
-      <Consultation />
-      <Footer />
+      <Consultation consultation={siteData.consultation} testimonial_form={siteData.testimonial_form} />
+      <Footer footer={siteData.footer} profile={siteData.profile} />
     </>
   );
 }

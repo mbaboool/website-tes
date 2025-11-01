@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, useGetList, Loading, Error, Link, useRecordContext } from 'react-admin';
+import { List, useGetList, Loading, Error, Link, EditButton, DeleteButton } from 'react-admin';
 import {
   Card,
   CardContent,
@@ -84,27 +84,8 @@ const EventCard = ({ record }) => {
           {truncatedDescription}
         </Typography>
         <Box mt={1}>
-          <Chip
-            icon={<EditIcon />}
-            label="Edit"
-            component={Link}
-            to={`/events/${record.id}/edit`}
-            variant="outlined"
-            size="small"
-            color="primary"
-            clickable
-            sx={{ mr: 1 }}
-          />
-          <Chip
-            icon={<DeleteIcon />}
-            label="Hapus"
-            component="span" // Gunakan span untuk tindakan hapus
-            variant="outlined"
-            size="small"
-            color="secondary"
-            clickable
-            onClick={() => window.confirm(`Yakin ingin menghapus acara "${record.title}"?`) && console.log(`Hapus acara ${record.id}`)} // Ganti console.log dengan fungsi hapus sebenarnya
-          />
+          <EditButton record={record} basePath="/events" sx={{ mr: 1 }} />
+          <DeleteButton record={record} basePath="/events" mutationMode="pessimistic" />
         </Box>
       </CardContent>
       <Box sx={{ p: 2, pt: 0 }}>
@@ -120,9 +101,20 @@ const EventCard = ({ record }) => {
 const EventFilter = ({ setFilter }) => {
   const [value, setValue] = React.useState('');
 
+  const [debouncedFilter, setDebouncedFilter] = React.useState('');
+  const debounceTimeoutRef = React.useRef(null);
+
   const handleChange = (e) => {
-    setValue(e.target.value);
-    setFilter(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      setFilter(newValue);
+    }, 300); // Debounce for 300ms
   };
 
   return (
@@ -155,20 +147,15 @@ export const EventList = (props) => {
   const { data, loading, error, refetch } = useGetList(
     'events',
     {
-      pagination: { page: 1, perPage: 100 }, // Ambil semua untuk filter klien
+      pagination: { page: 1, perPage: 25 }, // Set a reasonable perPage for server-side filtering
       sort: { field: 'date', order: 'DESC' }, // Urutkan berdasarkan tanggal terbaru
+      filter: filter ? { q: filter } : {}, // Pass the filter to the dataProvider
     },
     {
       onSuccess: () => {},
       onFailure: (error) => console.error('Error fetching events:', error),
     }
   );
-
-  // Filter data secara klien berdasarkan input
-  const filteredData = data ? data.filter(item =>
-    item.title.toLowerCase().includes(filter.toLowerCase()) ||
-    item.description.toLowerCase().includes(filter.toLowerCase())
-  ) : [];
 
   if (loading) return <Loading />;
   if (error) return <Error />;
@@ -198,13 +185,13 @@ export const EventList = (props) => {
         </Button>
       </Box>
       <Grid container spacing={3}>
-        {filteredData.map((record) => (
+        {data.map((record) => (
           <Grid item xs={12} sm={6} md={4} key={record.id}>
             <EventCard record={record} />
           </Grid>
         ))}
       </Grid>
-      {filteredData.length === 0 && (
+      {data.length === 0 && (
         <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Typography variant="h6" color="textSecondary">
             Tidak ada acara yang ditemukan.

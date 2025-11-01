@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, useGetList, Loading, Error, Link as RaLink, useRecordContext } from 'react-admin';
+import { List, useGetList, Loading, Error, Link as RaLink, EditButton, DeleteButton } from 'react-admin';
 import {
   Card,
   CardContent,
@@ -63,26 +63,8 @@ const SocialLinkCard = ({ record }) => {
         </Box>
       </CardContent>
       <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
-        <Chip
-          icon={<EditIcon />}
-          label="Edit"
-          component={RaLink}
-          to={`/social_links/${record.id}/edit`}
-          variant="outlined"
-          size="small"
-          color="primary"
-          clickable
-        />
-        <Chip
-          icon={<DeleteIcon />}
-          label="Hapus"
-          component="span"
-          variant="outlined"
-          size="small"
-          color="secondary"
-          clickable
-          onClick={() => window.confirm(`Yakin ingin menghapus tautan "${record.platform}"?`) && console.log(`Hapus link ${record.id}`)} // Ganti console.log
-        />
+        <EditButton record={record} basePath="/social_links" sx={{ mr: 1 }} />
+        <DeleteButton record={record} basePath="/social_links" mutationMode="pessimistic" />
       </CardActions>
     </Card>
   );
@@ -92,9 +74,20 @@ const SocialLinkCard = ({ record }) => {
 const SocialLinkFilter = ({ setFilter }) => {
   const [value, setValue] = React.useState('');
 
+  const [debouncedFilter, setDebouncedFilter] = React.useState('');
+  const debounceTimeoutRef = React.useRef(null);
+
   const handleChange = (e) => {
-    setValue(e.target.value);
-    setFilter(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      setFilter(newValue);
+    }, 300); // Debounce for 300ms
   };
 
   return (
@@ -127,19 +120,15 @@ export const SocialLinkList = (props) => {
   const { data, loading, error } = useGetList(
     'social_links',
     {
-      pagination: { page: 1, perPage: 100 },
+      pagination: { page: 1, perPage: 25 }, // Set a reasonable perPage for server-side filtering
       sort: { field: 'platform', order: 'ASC' }, // Urutkan berdasarkan platform
+      filter: filter ? { q: filter } : {}, // Pass the filter to the dataProvider
     },
     {
       onSuccess: () => {},
       onFailure: (error) => console.error('Error fetching social links:', error),
     }
   );
-
-  // Filter data secara klien
-  const filteredData = data ? data.filter(item =>
-    item.platform.toLowerCase().includes(filter.toLowerCase())
-  ) : [];
 
   if (loading) return <Loading />;
   if (error) return <Error />;
@@ -170,13 +159,13 @@ export const SocialLinkList = (props) => {
         </Button>
       </Box>
       <Grid container spacing={3}>
-        {filteredData.map((record) => (
+        {data.map((record) => (
           <Grid item xs={12} sm={6} md={4} key={record.id}>
             <SocialLinkCard record={record} />
           </Grid>
         ))}
       </Grid>
-      {filteredData.length === 0 && (
+      {data.length === 0 && (
         <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Typography variant="h6" color="textSecondary">
             Tidak ada tautan sosial yang ditemukan.

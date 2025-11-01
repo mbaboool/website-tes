@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Datagrid, TextField, EditButton, useGetList, Loading, Error, Link } from 'react-admin';
+import { List, Datagrid, TextField, EditButton } from 'react-admin';
 import { Box, Paper, TextField as MuiTextField, InputAdornment, Typography, Chip } from '@mui/material';
 import { Edit as EditIcon, Search as SearchIcon, Settings as SettingsIcon } from '@mui/icons-material';
 
@@ -7,9 +7,20 @@ import { Edit as EditIcon, Search as SearchIcon, Settings as SettingsIcon } from
 const SettingFilter = ({ setFilter }) => {
   const [value, setValue] = React.useState('');
 
+  const [debouncedFilter, setDebouncedFilter] = React.useState('');
+  const debounceTimeoutRef = React.useRef(null);
+
   const handleChange = (e) => {
-    setValue(e.target.value);
-    setFilter(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      setFilter(newValue);
+    }, 300); // Debounce for 300ms
   };
 
   return (
@@ -70,7 +81,7 @@ export const SettingList = (props) => {
   // Field-field yang akan ditampilkan di datagrid
   const gridFields = [
     <TextField key="key" source="key" label="Kunci Pengaturan" sortable={true} />,
-    <ValueField key="value" record={undefined} label="Nilai Saat Ini" />, // Gunakan komponen kustom
+    <ValueField key="value" label="Nilai Saat Ini" />, // Gunakan komponen kustom
     <TextField key="description" source="description" label="Deskripsi" sortable={false} />,
     <EditButton key="edit" label="Ubah" />
   ];
@@ -82,6 +93,7 @@ export const SettingList = (props) => {
       actions={false}
       sort={{ field: 'key', order: 'ASC' }} // Urutkan berdasarkan kunci
       perPage={25}
+      filter={filter ? { key: filter } : {}} // Apply filter based on the search input
     >
       <Box sx={{ mb: 2 }}>
         <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', color: '#1f2937', mb: 1 }}>

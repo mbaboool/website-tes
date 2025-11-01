@@ -34,7 +34,7 @@ function Profile({ profileData }) {
       {/* New column wrapper for the left side */}
       <div className="profile-image-column">
         <h2 className="profile-column-title">PROFIL</h2>
-        <img src="/images/profil.png" alt="Gus Baraja" className="profile-pic-new" />
+        <img src={profileData.profilePic} alt="Gus Baraja" className="profile-pic-new" />
       </div>
 
       {/* The right side content column */}

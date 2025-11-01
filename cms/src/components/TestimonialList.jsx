@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, useGetList, Loading, Error, Link as RaLink, useRecordContext } from 'react-admin';
+import { List, useGetList, Loading, Error, Link as RaLink, EditButton, DeleteButton } from 'react-admin';
 import {
   Card,
   CardContent,
@@ -65,30 +65,8 @@ const TestimonialCard = ({ record }) => {
         </Box>
       </CardContent>
       <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
-        <Tooltip title={`Lihat/Edit: ${record.name}`}>
-          <Chip
-            icon={<EditIcon />}
-            label="Edit"
-            component={RaLink}
-            to={`/testimonials/${record.id}/edit`}
-            variant="outlined"
-            size="small"
-            color="primary"
-            clickable
-          />
-        </Tooltip>
-        <Tooltip title={`Hapus: ${record.name}`}>
-          <Chip
-            icon={<DeleteIcon />}
-            label="Hapus"
-            component="span"
-            variant="outlined"
-            size="small"
-            color="secondary"
-            clickable
-            onClick={() => window.confirm(`Yakin ingin menghapus testimoni dari "${record.name}"?`) && console.log(`Hapus testimonial ${record.id}`)} // Ganti console.log
-          />
-        </Tooltip>
+        <EditButton record={record} basePath="/testimonials" sx={{ mr: 1 }} />
+        <DeleteButton record={record} basePath="/testimonials" mutationMode="pessimistic" />
       </CardActions>
     </Card>
   );
@@ -98,9 +76,20 @@ const TestimonialCard = ({ record }) => {
 const TestimonialFilter = ({ setFilter }) => {
   const [value, setValue] = React.useState('');
 
+  const [debouncedFilter, setDebouncedFilter] = React.useState('');
+  const debounceTimeoutRef = React.useRef(null);
+
   const handleChange = (e) => {
-    setValue(e.target.value);
-    setFilter(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      setFilter(newValue);
+    }, 300); // Debounce for 300ms
   };
 
   return (
@@ -133,20 +122,15 @@ export const TestimonialList = (props) => {
   const { data, loading, error } = useGetList(
     'testimonials',
     {
-      pagination: { page: 1, perPage: 100 },
+      pagination: { page: 1, perPage: 25 }, // Set a reasonable perPage for server-side filtering
       sort: { field: 'id', order: 'DESC' }, // Urutkan berdasarkan ID terbaru
+      filter: filter ? { q: filter } : {}, // Pass the filter to the dataProvider
     },
     {
       onSuccess: () => {},
       onFailure: (error) => console.error('Error fetching testimonials:', error),
     }
   );
-
-  // Filter data secara klien
-  const filteredData = data ? data.filter(item =>
-    item.name.toLowerCase().includes(filter.toLowerCase()) ||
-    (item.testimonial && item.testimonial.toLowerCase().includes(filter.toLowerCase()))
-  ) : [];
 
   if (loading) return <Loading />;
   if (error) return <Error />;
@@ -176,13 +160,13 @@ export const TestimonialList = (props) => {
         </Button>
       </Box>
       <Grid container spacing={3}>
-        {filteredData.map((record) => (
+        {data.map((record) => (
           <Grid item xs={12} sm={6} md={4} key={record.id}>
             <TestimonialCard record={record} />
           </Grid>
         ))}
       </Grid>
-      {filteredData.length === 0 && (
+      {data.length === 0 && (
         <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Typography variant="h6" color="textSecondary">
             Tidak ada testimoni yang ditemukan.

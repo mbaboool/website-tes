@@ -2,7 +2,6 @@ import React from 'react';
 import { Edit, SimpleForm, TextInput, required } from 'react-admin';
 import { Box, Typography, Paper } from '@mui/material';
 import { SmartFormToolbar } from './SmartFormToolbar'; // Sesuaikan path jika berbeda
-import { smartValidation } from '../utils/notifications'; // Sesuaikan path jika berbeda
 import FileInputSupabase from './FileInputSupabase'; // Pastikan path benar
 
 // Definisikan validasi (sama seperti Create)

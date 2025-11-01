@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { fetchUtils } from 'react-admin';
-import { stringify } from 'query-string';
+
 
 const supabaseUrl = 'https://qfsfzrjpgrukferrelho.supabase.co';
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -16,10 +15,37 @@ const dataProvider = {
             .range((page - 1) * perPage, page * perPage - 1)
             .order(field, { ascending: order === 'asc' });
 
+        const allowedFilters = {
+            events: ['id', 'title', 'description', 'date'],
+            gallery_items: ['id', 'caption', 'image'],
+            testimonials: ['id', 'name', 'source', 'feedback'],
+            books: ['id', 'title', 'description'],
+            settings: ['id', 'key', 'value'],
+            social_links: ['id', 'name', 'url'],
+        };
+
         if (params.filter) {
+            const resourceAllowedFilters = allowedFilters[resource] || [];
             for (const key in params.filter) {
-                if (params.filter[key] !== undefined && params.filter[key] !== null && params.filter[key] !== '') {
-                    query = query.ilike(key, `%${params.filter[key]}%`);
+                if (resourceAllowedFilters.includes(key)) {
+                    if (params.filter[key] !== undefined && params.filter[key] !== null && params.filter[key] !== '') {
+                        query = query.ilike(key, `%${params.filter[key]}%`);
+                    }
+                } else if (key === 'q') {
+                    // Handle global search 'q' separately and safely
+                    if (resource === 'events') {
+                        query = query.or(`title.ilike.%${params.filter.q}%,description.ilike.%${params.filter.q}%`);
+                    } else if (resource === 'gallery_items') {
+                        query = query.ilike('caption', `%${params.filter.q}%`);
+                    } else if (resource === 'settings') {
+                        query = query.ilike('key', `%${params.filter.q}%`);
+                    } else if (resource === 'social_links') {
+                        query = query.ilike('platform', `%${params.filter.q}%`);
+                    } else if (resource === 'testimonials') {
+                        query = query.or(`name.ilike.%${params.filter.q}%,testimonial.ilike.%${params.filter.q}%`);
+                    }
+                } else {
+                    console.warn(`Filtering by disallowed key: ${key} for resource: ${resource}`);
                 }
             }
         }

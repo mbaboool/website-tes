@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, useGetList, Loading, Error, Link, useRecordContext } from 'react-admin';
+import { List, useGetList, Loading, Error, Link, EditButton, DeleteButton } from 'react-admin';
 import {
   Card,
   CardContent,
@@ -71,28 +71,8 @@ const GalleryCard = ({ record }) => {
         </Typography>
         <Box mt={1}>
           {/* Tombol Edit */}
-          <Chip
-            icon={<EditIcon />}
-            label="Edit"
-            component={Link}
-            to={`/gallery_items/${record.id}/edit`}
-            variant="outlined"
-            size="small"
-            color="primary"
-            clickable
-            sx={{ mr: 1 }}
-          />
-          {/* Tombol Hapus */}
-          <Chip
-            icon={<DeleteIcon />}
-            label="Hapus"
-            component="span"
-            variant="outlined"
-            size="small"
-            color="secondary"
-            clickable
-            onClick={() => window.confirm(`Yakin ingin menghapus gambar "${record.caption || record.id}"?`) && console.log(`Hapus galeri ${record.id}`)} // Ganti console.log
-          />
+          <EditButton record={record} basePath="/gallery_items" sx={{ mr: 1 }} />
+          <DeleteButton record={record} basePath="/gallery_items" mutationMode="pessimistic" />
         </Box>
       </CardContent>
     </Card>
@@ -103,9 +83,20 @@ const GalleryCard = ({ record }) => {
 const GalleryFilter = ({ setFilter }) => {
   const [value, setValue] = React.useState('');
 
+  const [debouncedFilter, setDebouncedFilter] = React.useState('');
+  const debounceTimeoutRef = React.useRef(null);
+
   const handleChange = (e) => {
-    setValue(e.target.value);
-    setFilter(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      setFilter(newValue);
+    }, 300); // Debounce for 300ms
   };
 
   return (
@@ -138,19 +129,15 @@ export const GalleryList = (props) => {
   const { data, loading, error } = useGetList(
     'gallery_items',
     {
-      pagination: { page: 1, perPage: 100 },
+      pagination: { page: 1, perPage: 25 }, // Set a reasonable perPage for server-side filtering
       sort: { field: 'id', order: 'DESC' }, // Urutkan berdasarkan ID terbaru sebagai contoh
+      filter: filter ? { q: filter } : {}, // Pass the filter to the dataProvider
     },
     {
       onSuccess: () => {},
       onFailure: (error) => console.error('Error fetching gallery items:', error),
     }
   );
-
-   // Filter data secara klien berdasarkan input
-   const filteredData = data ? data.filter(item =>
-    (item.caption && item.caption.toLowerCase().includes(filter.toLowerCase()))
-  ) : [];
 
   if (loading) return <Loading />;
   if (error) return <Error />;
@@ -180,13 +167,13 @@ export const GalleryList = (props) => {
         </Button>
       </Box>
       <Grid container spacing={3}>
-        {filteredData.map((record) => (
+        {data.map((record) => (
           <Grid item xs={12} sm={6} md={4} key={record.id}>
             <GalleryCard record={record} />
           </Grid>
         ))}
       </Grid>
-      {filteredData.length === 0 && (
+      {data.length === 0 && (
         <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Typography variant="h6" color="textSecondary">
             Tidak ada gambar yang ditemukan.
