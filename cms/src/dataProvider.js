@@ -190,3 +190,4 @@ const dataProvider = {
 };
 
 export default dataProvider;
+export { supabase };

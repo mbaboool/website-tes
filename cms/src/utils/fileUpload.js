@@ -1,7 +1,5 @@
 // utils/fileUpload.js
-import { dataProvider } from '../dataProvider'; // Assuming dataProvider exports the supabase client
-
-const supabase = dataProvider;
+import { supabase } from '../dataProvider'; // Assuming dataProvider exports the supabase client
 
 // Fungsi untuk mengupload file ke Supabase Storage
 export async function uploadFileToSupabase(file, bucketName = 'images', folderPath = '') {
