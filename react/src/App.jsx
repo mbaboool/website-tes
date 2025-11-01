@@ -200,10 +200,10 @@ const Events = ({ events }) => {
                             <div className="event-info">
                                 <h3>{event.title}</h3>
                                 <p>{event.description}</p>
-                                {isValidFutureDate(event.date) ? (
-                                    <Countdown targetDate={event.date} />
-                                ) : (
+                                {event.is_coming_soon || !isValidFutureDate(event.date) ? (
                                     <div className="coming-soon">Segera Hadir</div>
+                                ) : (
+                                    <Countdown targetDate={event.date} />
                                 )}
                                 <button onClick={() => openModal(event)} className="register-button">Daftar Sekarang</button>
                             </div>

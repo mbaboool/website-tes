@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, SimpleForm, TextInput, DateInput, required } from 'react-admin';
+import { Edit, SimpleForm, TextInput, DateInput, BooleanInput, required } from 'react-admin';
 import { Box, Typography, Paper } from '@mui/material';
 import { SmartFormToolbar } from './SmartFormToolbar'; // Sesuaikan path jika berbeda
 import FileInputSupabase from './FileInputSupabase'; // Pastikan path benar
@@ -70,10 +70,15 @@ export const EventEdit = (props) => (
                 />
                 <DateInput
                     source="date"
-                    label="Tanggal Acara *"
+                    label="Tanggal Acara"
                     fullWidth
-                    validate={dateValidation}
-                    helperText="Pilih tanggal pelaksanaan acara."
+                    helperText="Pilih tanggal pelaksanaan acara. Kosongkan jika belum pasti."
+                    sx={{ mb: 2 }}
+                />
+                <BooleanInput 
+                    source="is_coming_soon" 
+                    label="Tampilkan 'Segera Hadir' (Coming Soon)" 
+                    helperText="Jika diaktifkan, akan menampilkan 'Segera Hadir' di website utama, mengabaikan tanggal."
                     sx={{ mb: 2 }}
                 />
                 <FileInputSupabase

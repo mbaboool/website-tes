@@ -1,5 +1,5 @@
 import React from 'react';
-import { Create, SimpleForm, TextInput, DateInput, required } from 'react-admin';
+import { Create, SimpleForm, TextInput, DateInput, BooleanInput, required } from 'react-admin';
 import { Box, Typography, Paper } from '@mui/material';
 import { SmartFormToolbar } from './SmartFormToolbar'; // Sesuaikan path jika berbeda
 import FileInputSupabase from './FileInputSupabase'; // Pastikan path benar
@@ -18,7 +18,7 @@ const descriptionValidation = [required(), (value) => {
     return undefined;
 }];
 const imageValidation = [required()]; // Asumsi gambar wajib
-const dateValidation = [required()]; // Asumsi tanggal wajib
+const dateValidation = []; // Tanggal tidak lagi wajib
 
 export const EventCreate = (props) => (
     <Create
@@ -70,10 +70,17 @@ export const EventCreate = (props) => (
                 />
                 <DateInput
                     source="date"
-                    label="Tanggal Acara *"
+                    label="Tanggal Acara"
                     fullWidth
                     validate={dateValidation}
-                    helperText="Pilih tanggal pelaksanaan acara."
+                    helperText="Pilih tanggal pelaksanaan acara. Kosongkan jika belum pasti."
+                    sx={{ mb: 2 }}
+                />
+                <BooleanInput 
+                    source="is_coming_soon" 
+                    label="Tampilkan 'Segera Hadir' (Coming Soon)" 
+                    defaultValue={false}
+                    helperText="Jika diaktifkan, akan menampilkan 'Segera Hadir' di website utama, mengabaikan tanggal."
                     sx={{ mb: 2 }}
                 />
                 <FileInputSupabase
