@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetList, Loading, Error, Link } from 'react-admin';
+import { useGetList, Loading, Error, Link as RaLink } from 'react-admin';
 import {
   Card,
   CardContent,
@@ -62,7 +62,7 @@ const StatCard = ({ title, value, icon, color, to, actionLabel }) => {
         <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
           <Button
             size="small"
-            component={Link}
+            component={RaLink}
             to={to}
             startIcon={<AddIcon />}
             variant="outlined"
