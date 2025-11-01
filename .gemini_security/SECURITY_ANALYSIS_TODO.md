@@ -1,0 +1,49 @@
+- [x] SAST Recon on `cms/src/App.jsx`
+  - [x] Investigate data flow from dataProvider on line 33.
+- [x] SAST Recon on `cms/src/dataProvider.js`
+  - [x] Investigate data flow from params.filter on line 19.
+  - [x] Investigate data flow from params.data in create() on line 127.
+  - [x] Investigate data flow from params.data in update() on line 95.
+- [x] SAST Recon on `cms/src/Layout.jsx`
+- [x] SAST Recon on `cms/src/main.jsx`
+- [x] SAST Recon on `cms/src/components/BookEdit.jsx`
+- [x] SAST Recon on `cms/src/components/BookList.jsx`
+- [x] SAST Recon on `cms/src/components/BookShow.jsx`
+- [ ] SAST Recon on `cms/src/components/Dashboard.jsx`
+- [ ] SAST Recon on `cms/src/components/EventCreate.jsx`
+- [ ] SAST Recon on `cms/src/components/EventEdit.jsx`
+- [ ] SAST Recon on `cms/src/components/EventList.jsx`
+- [ ] SAST Recon on `cms/src/components/EventShow.jsx`
+- [ ] SAST Recon on `cms/src/components/FileInputSupabase.jsx`
+- [ ] SAST Recon on `cms/src/components/GalleryCreate.jsx`
+- [ ] SAST Recon on `cms/src/components/GalleryEdit.jsx`
+- [ ] SAST Recon on `cms/src/components/GalleryList.jsx`
+- [ ] SAST Recon on `cms/src/components/GalleryShow.jsx`
+- [ ] SAST Recon on `cms/src/components/HelpPanel.jsx`
+- [ ] SAST Recon on `cms/src/components/ImageStatusChecker.jsx`
+- [ ] SAST Recon on `cms/src/components/SettingEdit.jsx`
+- [ ] SAST Recon on `cms/src/components/SettingList.jsx`
+- [ ] SAST Recon on `cms/src/components/SettingShow.jsx`
+- [ ] SAST Recon on `cms/src/components/SmartFormToolbar.jsx`
+- [ ] SAST Recon on `cms/src/components/SocialLinkEdit.jsx`
+- [ ] SAST Recon on `cms/src/components/SocialLinkList.jsx`
+- [ ] SAST Recon on `cms/src/components/SocialLinkShow.jsx`
+- [ ] SAST Recon on `cms/src/components/TestimonialCreate.jsx`
+- [ ] SAST Recon on `cms/src/components/TestimonialEdit.jsx`
+- [ ] SAST Recon on `cms/src/components/TestimonialList.jsx`
+- [ ] SAST Recon on `cms/src/components/TestimonialShow.jsx`
+- [ ] SAST Recon on `cms/src/utils/checkSchema.js`
+- [ ] SAST Recon on `cms/src/utils/fileUpload.js`
+- [ ] SAST Recon on `cms/src/utils/notifications.js`
+- [ ] SAST Recon on `react/src/App.jsx`
+- [ ] SAST Recon on `react/src/main.jsx`
+- [ ] SAST Recon on `react/src/components/Blackhole.jsx`
+- [ ] SAST Recon on `react/src/components/Countdown.jsx`
+- [ ] SAST Recon on `cms/src/components/Fluid.jsx`
+- [ ] SAST Recon on `cms/src/components/Gallery.jsx`
+- [ ] SAST Recon on `cms/src/components/Profile.jsx`
+- [ ] SAST Recon on `cms/src/components/SocialIcon.jsx`
+- [ ] SAST Recon on `cms/src/components/Testimonials.jsx`
+- [ ] SAST Recon on `react/src/config/firebase.js`
+- [ ] SAST Recon on `react/src/config/supabase.js`
+- [ ] Conduct the final review of all findings as per your **Minimizing False Positives** operating principle and generate the final report.
